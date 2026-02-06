@@ -77,11 +77,10 @@ export default function HomePage() {
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-secondary/20 rounded-3xl -rotate-3" />
               <div className="relative aspect-square rounded-3xl border-8 border-white shadow-2xl overflow-hidden bg-muted">
                 <img
-                  src="/sports-week-poster-2026.jpg"
+                  src={`/sports-week-poster-2026.jpg?v=${new Date().getTime()}`}
                   onError={(e) => {
-                    // Instagram login page URL cannot be used as an image source.
-                    // Fallback to a generic sports placeholder.
-                    // e.target.src = "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&q=80&w=800";
+                    // Fallback to a generic sports placeholder if local file fails
+                    e.target.src = "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&q=80&w=800";
                     e.target.onerror = null;
                   }}
                   alt="Sports Week 2026"

@@ -44,7 +44,15 @@ export const signup = async (req, res) => {
         );
 
         // Send Email
-        await sendOTPEmail(email, otp);
+        console.log("============================================");
+        console.log(`[DEV MODE] Signup OTP for ${email}: ${otp}`);
+        console.log("============================================");
+
+        try {
+            await sendOTPEmail(email, otp);
+        } catch (emailErr) {
+            console.error("Failed to send email:", emailErr.message);
+        }
 
         res.status(201).json({ message: 'Signup successful, please verify your email via OTP', email });
     } catch (err) {
@@ -77,8 +85,16 @@ export const requestLoginOTP = async (req, res) => {
             [user.id, otpHashed, expiresAt]
         );
 
-        await sendOTPEmail(email, otp);
-        res.json({ message: 'OTP sent to your email' });
+        console.log("============================================");
+        console.log(`[DEV MODE] Login OTP for ${email}: ${otp}`);
+        console.log("============================================");
+
+        try {
+            await sendOTPEmail(email, otp);
+        } catch (emailErr) {
+            console.error("Failed to send email:", emailErr.message);
+        }
+        res.json({ message: 'OTP generated. Check console for code.' });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

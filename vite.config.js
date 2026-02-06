@@ -5,11 +5,8 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
-    port: 8080,
-    hmr: {
-      overlay: false,
-    },
+    host: true, // Listen on all addresses
+    port: 5173,
   },
   plugins: [react()],
   resolve: {
