@@ -13,4 +13,19 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
+// Auto-migration for attempts column
+(async () => {
+    try {
+        const connection = await pool.getConnection();
+        const [rows] = await connection.query("SHOW COLUMNS FROM otps LIKE 'attempts'");
+        if (rows.length === 0) {
+            await connection.query("ALTER TABLE otps ADD COLUMN attempts INT DEFAULT 0");
+            console.log("Migration: Added 'attempts' column to otps table");
+        }
+        connection.release();
+    } catch (err) {
+        // Ignore if valid connection issues for now, main app will log it
+    }
+})();
+
 export default pool;

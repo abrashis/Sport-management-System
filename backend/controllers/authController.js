@@ -5,8 +5,8 @@ import { z } from 'zod';
 
 const signupSchema = z.object({
     full_name: z.string().min(2),
-    email: z.string().email().refine(email => email.endsWith('@bicnepal.edu.np') || email.endsWith('@gmail.com'), {
-        message: "Only @bicnepal.edu.np or @gmail.com emails are allowed"
+    email: z.string().email().refine(email => email.endsWith('@bicnepal.edu.np'), {
+        message: "Only @bicnepal.edu.np emails are allowed"
     }),
     password: z.string().min(6),
     confirm_password: z.string()
@@ -64,8 +64,8 @@ export const signup = async (req, res) => {
 // Request Login OTP (For participants)
 export const requestLoginOTP = async (req, res) => {
     const { email } = req.body;
-    if (!email.endsWith('@bicnepal.edu.np') && !email.endsWith('@gmail.com')) {
-        return res.status(403).json({ message: 'Only @bicnepal.edu.np or @gmail.com emails are allowed for participants' });
+    if (!email.endsWith('@bicnepal.edu.np')) {
+        return res.status(403).json({ message: 'Only @bicnepal.edu.np emails are allowed for participants' });
     }
 
     try {
@@ -160,9 +160,9 @@ export const login = async (req, res) => {
 export const verifyOTP = async (req, res) => {
     const { email, otp } = req.body;
     try {
-        const [user] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
-        if (user.length === 0) return res.status(400).json({ message: 'User not found' });
-        const userId = user[0].id;
+        const [users] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
+        if (users.length === 0) return res.status(400).json({ message: 'User not found' });
+        const userId = users[0].id;
 
         const [otps] = await pool.execute(
             'SELECT * FROM otps WHERE user_id = ? AND used = 0 AND expires_at > NOW() ORDER BY created_at DESC LIMIT 1',
@@ -171,12 +171,24 @@ export const verifyOTP = async (req, res) => {
 
         if (otps.length === 0) return res.status(400).json({ message: 'Invalid or expired OTP' });
 
-        const isMatch = await bcrypt.compare(otp, otps[0].otp_hash);
-        if (!isMatch) return res.status(400).json({ message: 'Incorrect OTP' });
+        const otpRecord = otps[0];
+
+        // Check max attempts
+        if (otpRecord.attempts && otpRecord.attempts >= 5) {
+            return res.status(429).json({ message: 'Too many failed attempts. Please request a new OTP.' });
+        }
+
+        const isMatch = await bcrypt.compare(otp, otpRecord.otp_hash);
+        if (!isMatch) {
+            // Increment attempts
+            await pool.execute('UPDATE otps SET attempts = attempts + 1 WHERE id = ?', [otpRecord.id]);
+            const attemptsLeft = 5 - (otpRecord.attempts + 1);
+            return res.status(400).json({ message: `Incorrect OTP. ${attemptsLeft} attempts remaining.` });
+        }
 
         // Update user and OTP
         await pool.execute('UPDATE users SET verified = 1 WHERE id = ?', [userId]);
-        await pool.execute('UPDATE otps SET used = 1 WHERE id = ?', [otps[0].id]);
+        await pool.execute('UPDATE otps SET used = 1 WHERE id = ?', [otpRecord.id]);
 
         res.json({ message: 'Email verified successfully' });
     } catch (err) {

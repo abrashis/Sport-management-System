@@ -32,8 +32,8 @@ export default function LoginPage() {
 
     const handleRequestOTP = async (e) => {
         e?.preventDefault();
-        if (!email.endsWith("@bicnepal.edu.np") && !email.endsWith("@gmail.com")) {
-            toast.error("Please use @bicnepal.edu.np or @gmail.com email address");
+        if (!email.endsWith("@bicnepal.edu.np")) {
+            toast.error("Please use @bicnepal.edu.np email address");
             return;
         }
 
@@ -117,7 +117,7 @@ export default function LoginPage() {
                                         <Input
                                             id="email"
                                             type="email"
-                                            placeholder="name@bicnepal.edu.np or gmail.com"
+                                            placeholder="name@bicnepal.edu.np"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             className="pl-10"

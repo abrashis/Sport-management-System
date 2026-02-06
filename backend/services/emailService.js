@@ -4,7 +4,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // true for 465, false for other ports
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -12,6 +14,24 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendOTPEmail = async (email, otp) => {
+    // Check for placeholder credentials
+    if (process.env.EMAIL_USER === 'your-email@gmail.com' || process.env.EMAIL_PASS === 'your-app-password') {
+        const warning = `
+        ###########################################################
+        #  CRITICAL ERROR: EMAIL CREDENTIALS NOT CONFIGURED       #
+        #                                                         #
+        #  The email was NOT sent because you are using           #
+        #  placeholder credentials in backend/.env                #
+        #                                                         #
+        #  FIX THIS:                                              #
+        #  1. Open backend/.env                                   #
+        #  2. Set EMAIL_USER to your real Gmail address           #
+        #  3. Set EMAIL_PASS to your 16-char App Password         #
+        ###########################################################
+        `;
+        console.error(warning);
+        return; // Stop trying to send
+    }
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
