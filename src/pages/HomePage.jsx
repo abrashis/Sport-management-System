@@ -1,7 +1,10 @@
-import { Link } from "react-router-dom";
-import { Trophy, Users, Calendar, ArrowRight, Shield, Star, CheckCircle2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Trophy, Users, Calendar, ArrowRight, Shield, Star, CheckCircle2, LogOut, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import api from "@/lib/axios";
+import { toast } from "sonner";
 
 const features = [
   {
@@ -22,6 +25,161 @@ const features = [
 ];
 
 export default function HomePage() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data } = await api.get("/auth/me");
+        setUser(data.user);
+      } catch (error) {
+        // Not logged in
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+      setUser(null);
+      toast.success("Logged out successfully");
+      navigate("/");
+    } catch (error) {
+      toast.error("Logout failed");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // LOGGED IN DASHBOARD
+  if (user) {
+    return (
+      <div className="min-h-screen bg-muted/10 p-6 lg:p-10">
+        <div className="max-w-6xl mx-auto space-y-8">
+
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-display font-bold">Welcome back, {user.full_name.split(' ')[0]}! 👋</h1>
+              <p className="text-muted-foreground">Participant Dashboard • {user.email}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign Out
+              </Button>
+            </div>
+          </div>
+
+          {/* Quick Stats/Status */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="bg-primary/5 border-primary/20 shadow-sm">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-medium flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-primary" />
+                  Account Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2 text-green-600 font-semibold bg-green-100 dark:bg-green-900/30 w-fit px-3 py-1 rounded-full text-sm">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Active & Verified
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-sm">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-medium flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-blue-500" />
+                  My Registrations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold font-display">0</div>
+                <p className="text-xs text-muted-foreground mt-1">Active tournament entries</p>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-sm">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-medium flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-amber-500" />
+                  Upcoming Matches
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold font-display">0</div>
+                <p className="text-xs text-muted-foreground mt-1">Scheduled games</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Quick Actions */}
+          <div>
+            <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Link to="/sports">
+                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full group">
+                  <CardContent className="pt-6 flex flex-col items-center text-center gap-3">
+                    <div className="h-12 w-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Trophy className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold">View Sports</h3>
+                      <p className="text-sm text-muted-foreground">Browse available games</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link to="/register">
+                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full group">
+                  <CardContent className="pt-6 flex flex-col items-center text-center gap-3">
+                    <div className="h-12 w-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Users className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold">Register Now</h3>
+                      <p className="text-sm text-muted-foreground">Join a tournament</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link to="/tie-sheets">
+                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full group">
+                  <CardContent className="pt-6 flex flex-col items-center text-center gap-3">
+                    <div className="h-12 w-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Calendar className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold">Tie Sheets</h3>
+                      <p className="text-sm text-muted-foreground">Check match schedules</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // PUBLIC LANDING PAGE
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
