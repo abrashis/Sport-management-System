@@ -25,7 +25,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden bg-background">
+      <section className="relative py-12 lg:py-20 overflow-hidden bg-background">
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl opacity-50" />
         <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-3xl opacity-50" />
 
@@ -34,7 +34,7 @@ export default function HomePage() {
             <div className="space-y-8 text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium animate-fade-in">
                 <Star className="h-3.5 w-3.5 fill-primary" />
-                <span>BIC Athletics Excellence 2025</span>
+                <span>BIC Athletics Excellence 2026</span>
               </div>
 
               <h1 className="text-5xl lg:text-7xl font-display font-bold tracking-tight text-foreground leading-[1.1]">
@@ -48,7 +48,7 @@ export default function HomePage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link to="/register">
+                <Link to="/signup">
                   <Button size="lg" className="px-8 h-14 text-base rounded-full shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
                     Get Started
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -76,11 +76,15 @@ export default function HomePage() {
             <div className="relative lg:block hidden">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-secondary/20 rounded-3xl -rotate-3" />
               <div className="relative aspect-square rounded-3xl border-8 border-white shadow-2xl overflow-hidden bg-muted">
-                {/* Placeholder for an image or graphic */}
-                <div className="absolute inset-0 gradient-hero opacity-80" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Trophy className="h-48 w-48 text-white/20 animate-pulse" />
-                </div>
+                <img
+                  src="/sports-week-poster.png"
+                  onError={(e) => {
+                    e.target.src = "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&q=80&w=800";
+                    e.target.onerror = null;
+                  }}
+                  alt="Sports Week 2026"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
@@ -112,7 +116,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 lg:py-32">
+      <section className="py-16 lg:py-24">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
             <h2 className="text-3xl lg:text-5xl font-display font-bold">Comprehensive Tournament Control</h2>
@@ -139,7 +143,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24">
+      <section className="py-16">
         <div className="container">
           <div className="rounded-[3rem] overflow-hidden relative bg-secondary text-white p-12 lg:p-24 text-center">
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1541252260737-04029456eeba?auto=format&fit=crop&q=80')] opacity-10 bg-cover bg-center" />
@@ -149,7 +153,7 @@ export default function HomePage() {
                 Join the competition today and become a part of Boston International College's sporting legacy.
               </p>
               <div className="pt-4">
-                <Link to="/register">
+                <Link to="/signup">
                   <Button size="lg" className="bg-white text-secondary hover:bg-white/90 px-12 h-16 text-lg rounded-full">
                     Get Started
                   </Button>

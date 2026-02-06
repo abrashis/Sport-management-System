@@ -83,12 +83,12 @@ export default function RegisterPage() {
     setTeamMembers(updated);
   };
 
-  const validateEmail = (email) => email.endsWith("@bicedu.np");
+  const validateEmail = (email) => email.endsWith("@bicnepal.edu.np") || email.endsWith("@gmail.com");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateEmail(email)) {
-      toast.error("Please use your official @bicedu.np email address");
+      toast.error("Please use your official @bicnepal.edu.np or @gmail.com email address");
       return;
     }
 
@@ -272,8 +272,8 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Official BIC Email (@bicedu.np) *</Label>
-                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="yourname@bicedu.np" required />
+                  <Label htmlFor="email">Email Address (@bicnepal.edu.np) *</Label>
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="yourname@bicnepal.edu.np or gmail.com" required />
                 </div>
 
                 {sportType === "team" && (

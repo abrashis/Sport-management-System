@@ -5,8 +5,8 @@ import { z } from 'zod';
 
 const signupSchema = z.object({
     full_name: z.string().min(2),
-    email: z.string().email().refine(email => email.endsWith('@bicedu.np') || email.endsWith('@gmail.com'), {
-        message: "Only @bicedu.np or @gmail.com emails are allowed"
+    email: z.string().email().refine(email => email.endsWith('@bicnepal.edu.np') || email.endsWith('@gmail.com'), {
+        message: "Only @bicnepal.edu.np or @gmail.com emails are allowed"
     }),
     password: z.string().min(6),
     confirm_password: z.string()
@@ -56,8 +56,8 @@ export const signup = async (req, res) => {
 // Request Login OTP (For participants)
 export const requestLoginOTP = async (req, res) => {
     const { email } = req.body;
-    if (!email.endsWith('@bicedu.np') && !email.endsWith('@gmail.com')) {
-        return res.status(403).json({ message: 'Only @bicedu.np or @gmail.com emails are allowed for participants' });
+    if (!email.endsWith('@bicnepal.edu.np') && !email.endsWith('@gmail.com')) {
+        return res.status(403).json({ message: 'Only @bicnepal.edu.np or @gmail.com emails are allowed for participants' });
     }
 
     try {

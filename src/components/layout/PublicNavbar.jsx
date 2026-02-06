@@ -15,6 +15,8 @@ export function PublicNavbar() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isHomePage = location.pathname === "/";
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/admin/login";
+  const showNav = !isHomePage && !isAuthPage;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -27,8 +29,8 @@ export function PublicNavbar() {
           <span className="hidden sm:inline">SportsPro</span>
         </Link>
 
-        {/* Desktop Navigation - Hidden on Home Page */}
-        {!isHomePage && (
+        {/* Desktop Navigation - Hidden on Home & Auth Pages */}
+        {showNav && (
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -42,7 +44,6 @@ export function PublicNavbar() {
                       "gap-2 transition-all",
                       isActive && "shadow-glow"
                     )}>
-
                     <Icon className="h-4 w-4" />
                     {item.label}
                   </Button>
@@ -52,8 +53,9 @@ export function PublicNavbar() {
           </nav>
         )}
 
-        {/* Admin Login */}
+        {/* Right Side Actions */}
         <div className="flex items-center gap-2">
+          {/* Landing Button: Show on Auth pages or general pages (not Home) */}
           {!isHomePage && (
             <Link to="/">
               <Button variant="ghost" size="sm" className="hidden sm:flex">
@@ -62,15 +64,19 @@ export function PublicNavbar() {
               </Button>
             </Link>
           )}
-          <Link to="/admin/login">
-            <Button variant="outline" size="sm" className="gap-2 border-primary/20 text-primary hover:bg-primary/5">
-              <LogIn className="h-4 w-4" />
-              <span>Admin Login</span>
-            </Button>
-          </Link>
 
-          {/* Mobile Menu Toggle - Only if not Home Page */}
-          {!isHomePage && (
+          {/* Hide Admin Login button if we are already on the admin login page */}
+          {location.pathname !== "/admin/login" && (
+            <Link to="/admin/login">
+              <Button variant="outline" size="sm" className="gap-2 border-primary/20 text-primary hover:bg-primary/5">
+                <LogIn className="h-4 w-4" />
+                <span>Admin Login</span>
+              </Button>
+            </Link>
+          )}
+
+          {/* Mobile Menu Toggle - Only if showing nav */}
+          {showNav && (
             <Button
               variant="ghost"
               size="icon"
