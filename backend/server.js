@@ -6,7 +6,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf';
-import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import pool from './config/db.js';
 
@@ -55,20 +54,13 @@ app.use(session({
 // const csrfProtection = csrf({ cookie: true });
 const csrfProtection = (req, res, next) => next(); // Bypass CSRF
 
-// Rate Limiting
-const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 10,
-    message: { message: "Too many login attempts, please try again later" }
-});
-
 // Routes
 app.get('/api/csrf-token', (req, res) => {
     // res.json({ csrfToken: req.csrfToken() });
     res.json({ csrfToken: "disabled-for-dev" });
 });
 
-app.use('/api/auth', loginLimiter, authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/participant', participantRoutes);
 app.use('/api/notifications', notificationRoutes);

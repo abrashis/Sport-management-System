@@ -11,6 +11,7 @@ import api from "@/lib/axios";
 export default function LoginPage() {
     const navigate = useNavigate();
     const location = useLocation();
+    const from = location.state?.from?.pathname;
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -39,10 +40,13 @@ export default function LoginPage() {
             const { data } = await api.post("/auth/login", { email, password });
             toast.success("Login successful!");
 
-            if (data.user.role === "admin") {
-                navigate("/admin");
+            // If user was redirected here from a protected page, go back there first
+            if (from) {
+                navigate(from, { replace: true });
+            } else if (data.user.role === "admin") {
+                navigate("/admin", { replace: true });
             } else {
-                navigate("/");
+                navigate("/", { replace: true });
             }
         } catch (err) {
             toast.error(err.response?.data?.message || "Login failed");

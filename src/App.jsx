@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { AdminGuard } from "@/components/auth/AdminGuard";
+import { UserGuard } from "@/components/auth/UserGuard";
 
 // Public Pages
 import HomePage from "@/pages/HomePage";
@@ -41,14 +42,16 @@ const App = () =>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route path="/sports" element={<SportsPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/tie-sheets" element={<TieSheetsPage />} />
+            {/* Admin Auth Routes use same public layout (navbar + footer) */}
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route path="/admin/signup" element={<AdminSignupPage />} />
+            {/* Auth-protected user routes */}
+            <Route element={<UserGuard />}>
+              <Route path="/sports" element={<SportsPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/tie-sheets" element={<TieSheetsPage />} />
+            </Route>
           </Route>
-
-          {/* Admin Auth Routes */}
-          <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route path="/admin/signup" element={<AdminSignupPage />} />
 
           {/* Protected Admin Routes */}
           <Route

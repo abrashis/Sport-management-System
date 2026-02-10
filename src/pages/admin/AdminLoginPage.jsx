@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Trophy, Loader2, Mail, Lock, ArrowLeft } from "lucide-react";
+import { Trophy, Loader2, Mail, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
@@ -70,14 +70,8 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
+    <div className="min-h-[80vh] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Back to Home */}
-        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Link>
-
         <Card className="border-2 shadow-soft">
           <CardHeader className="text-center pb-2">
             <div className="mx-auto w-16 h-16 rounded-2xl gradient-hero flex items-center justify-center mb-4">

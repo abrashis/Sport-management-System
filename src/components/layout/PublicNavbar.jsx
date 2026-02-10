@@ -82,7 +82,17 @@ export function PublicNavbar() {
             </Link>
           )}
 
-          {/* When a user is logged in, show Sign Out instead of Admin Login */}
+          {/* When no user is logged in, show Admin Login */}
+          {!user && location.pathname !== "/admin/login" && (
+            <Link to="/admin/login">
+              <Button variant="outline" size="sm" className="gap-2 border-primary/20 text-primary hover:bg-primary/5">
+                <LogIn className="h-4 w-4" />
+                <span>Admin Login</span>
+              </Button>
+            </Link>
+          )}
+
+          {/* When a user is logged in, show Sign Out */}
           {user && (
             <Button
               variant="outline"

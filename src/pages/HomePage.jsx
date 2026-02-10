@@ -1,10 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
-import { Trophy, Users, Calendar, ArrowRight, Shield, Star, CheckCircle2, LogOut, Activity } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Trophy, Users, Calendar, ArrowRight, Shield, Star, CheckCircle2, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useEffect, useState } from "react";
-import api from "@/lib/axios";
-import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 const features = [
   {
@@ -25,35 +23,7 @@ const features = [
 ];
 
 export default function HomePage() {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data } = await api.get("/auth/me");
-        setUser(data.user);
-      } catch (error) {
-        // Not logged in
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuth();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout");
-      setUser(null);
-      toast.success("Logged out successfully");
-      navigate("/");
-    } catch (error) {
-      toast.error("Logout failed");
-    }
-  };
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -74,12 +44,6 @@ export default function HomePage() {
             <div>
               <h1 className="text-3xl font-display font-bold">Welcome back, {user.full_name.split(' ')[0]}! 👋</h1>
               <p className="text-muted-foreground">Participant Dashboard • {user.email}</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign Out
-              </Button>
             </div>
           </div>
 
