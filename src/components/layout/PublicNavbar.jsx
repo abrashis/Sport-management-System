@@ -1,8 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
-import { Trophy, Home, Users, Calendar, LogIn, Menu, X } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Trophy, Home, Users, Calendar, LogIn, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import api from "@/lib/axios";
+import { toast } from "sonner";
 
 const navItems = [
   { label: "Home", path: "/", icon: Home },
@@ -13,10 +16,24 @@ const navItems = [
 
 export function PublicNavbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isHomePage = location.pathname === "/";
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/admin/login";
-  const showNav = !isHomePage && !isAuthPage;
+  // Show the main nav everywhere except the true public landing (home while logged out)
+  const isLandingHome = isHomePage && !user && !loading;
+  const showNav = !isLandingHome && !isAuthPage;
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+      toast.success("Logged out successfully");
+      navigate("/");
+    } catch (error) {
+      toast.error("Logout failed");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -65,14 +82,17 @@ export function PublicNavbar() {
             </Link>
           )}
 
-          {/* Hide Admin Login button if we are already on the admin login page */}
-          {location.pathname !== "/admin/login" && (
-            <Link to="/admin/login">
-              <Button variant="outline" size="sm" className="gap-2 border-primary/20 text-primary hover:bg-primary/5">
-                <LogIn className="h-4 w-4" />
-                <span>Admin Login</span>
-              </Button>
-            </Link>
+          {/* When a user is logged in, show Sign Out instead of Admin Login */}
+          {user && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 border-primary/20 text-primary hover:bg-primary/5"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Sign Out</span>
+            </Button>
           )}
 
           {/* Mobile Menu Toggle - Only if showing nav */}
